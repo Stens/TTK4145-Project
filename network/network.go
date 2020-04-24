@@ -121,6 +121,7 @@ func ringWatcher() {
 		case disconnectedHostname := <-messages.DisconnectedFromServerChannel: // Doesn't get triggered on connect
 
 			peers.Remove(disconnectedHostname)
+			DisconnectedPeer <- disconnectedHostname
 			if peers.IsAlone() {
 				break
 			}
@@ -131,7 +132,6 @@ func ringWatcher() {
 			nodeList := peers.GetAll()
 			nodeBytes, _ := json.Marshal(nodeList)
 			messages.SendMessage(NodeChange, nodeBytes)
-			DisconnectedPeer <- disconnectedHostname
 			break
 
 		// Never more then one disconect or add per change
